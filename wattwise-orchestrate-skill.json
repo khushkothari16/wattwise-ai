@@ -1,0 +1,1540 @@
+﻿{
+    "openapi":  "3.0.3",
+    "info":  {
+                 "title":  "WattWise AI â Energy Skills",
+                 "description":  "Household electricity management skills. Use these to query energy data, get bill projections, detect anomalies, and get AI-powered saving tips.",
+                 "version":  "1.0.0"
+             },
+    "servers":  [
+                    {
+                        "url":  "http://localhost:8000/api/v1"
+                    }
+                ],
+    "paths":  {
+                  "/api/v1/orchestrate/energy-snapshot":  {
+                                                              "get":  {
+                                                                          "tags":  [
+                                                                                       "watsonx Orchestrate Skills"
+                                                                                   ],
+                                                                          "summary":  "Get household energy snapshot",
+                                                                          "description":  "Returns a complete real-time energy snapshot for the household. Includes today\u0027s consumption, this month\u0027s total and projected bill, the top energy-consuming appliance, and anomaly count. Use this as the first call to understand the household\u0027s current energy situation.",
+                                                                          "operationId":  "getEnergySnapshot",
+                                                                          "responses":  {
+                                                                                            "200":  {
+                                                                                                        "description":  "Successful Response",
+                                                                                                        "content":  {
+                                                                                                                        "application/json":  {
+                                                                                                                                                 "schema":  {
+                                                                                                                                                                "$ref":  "#/components/schemas/EnergySnapshot"
+                                                                                                                                                            }
+                                                                                                                                             }
+                                                                                                                    }
+                                                                                                    }
+                                                                                        },
+                                                                          "security":  [
+                                                                                           {
+                                                                                               "APIKeyHeader":  [
+
+                                                                                                                ]
+                                                                                           }
+                                                                                       ]
+                                                                      }
+                                                          },
+                  "/api/v1/orchestrate/appliances":  {
+                                                         "get":  {
+                                                                     "tags":  [
+                                                                                  "watsonx Orchestrate Skills"
+                                                                              ],
+                                                                     "summary":  "List all household appliances",
+                                                                     "description":  "Returns all appliances registered in the household with their wattage, daily usage hours, and calculated daily/monthly kWh consumption. Use this to understand what appliances are in the home and their energy impact.",
+                                                                     "operationId":  "listAppliances",
+                                                                     "security":  [
+                                                                                      {
+                                                                                          "APIKeyHeader":  [
+
+                                                                                                           ]
+                                                                                      }
+                                                                                  ],
+                                                                     "parameters":  [
+                                                                                        {
+                                                                                            "name":  "active_only",
+                                                                                            "in":  "query",
+                                                                                            "required":  false,
+                                                                                            "schema":  {
+                                                                                                           "type":  "boolean",
+                                                                                                           "default":  false,
+                                                                                                           "title":  "Active Only"
+                                                                                                       }
+                                                                                        }
+                                                                                    ],
+                                                                     "responses":  {
+                                                                                       "200":  {
+                                                                                                   "description":  "Successful Response",
+                                                                                                   "content":  {
+                                                                                                                   "application/json":  {
+                                                                                                                                            "schema":  {
+                                                                                                                                                           "$ref":  "#/components/schemas/ApplianceListResponse"
+                                                                                                                                                       }
+                                                                                                                                        }
+                                                                                                               }
+                                                                                               },
+                                                                                       "422":  {
+                                                                                                   "description":  "Validation Error",
+                                                                                                   "content":  {
+                                                                                                                   "application/json":  {
+                                                                                                                                            "schema":  {
+                                                                                                                                                           "$ref":  "#/components/schemas/HTTPValidationError"
+                                                                                                                                                       }
+                                                                                                                                        }
+                                                                                                               }
+                                                                                               }
+                                                                                   }
+                                                                 }
+                                                     },
+                  "/api/v1/orchestrate/bill-estimate":  {
+                                                            "get":  {
+                                                                        "tags":  [
+                                                                                     "watsonx Orchestrate Skills"
+                                                                                 ],
+                                                                        "summary":  "Get current month electricity bill estimate",
+                                                                        "description":  "Returns the projected electricity bill for the current month based on consumption so far. Includes days elapsed, kWh consumed, projected end-of-month kWh and cost, and budget status. Use this to answer questions like \u0027What will my electricity bill be?\u0027",
+                                                                        "operationId":  "getBillEstimate",
+                                                                        "responses":  {
+                                                                                          "200":  {
+                                                                                                      "description":  "Successful Response",
+                                                                                                      "content":  {
+                                                                                                                      "application/json":  {
+                                                                                                                                               "schema":  {
+                                                                                                                                                              "$ref":  "#/components/schemas/BillEstimateResponse"
+                                                                                                                                                          }
+                                                                                                                                           }
+                                                                                                                  }
+                                                                                                  }
+                                                                                      },
+                                                                        "security":  [
+                                                                                         {
+                                                                                             "APIKeyHeader":  [
+
+                                                                                                              ]
+                                                                                         }
+                                                                                     ]
+                                                                    }
+                                                        },
+                  "/api/v1/orchestrate/anomalies":  {
+                                                        "get":  {
+                                                                    "tags":  [
+                                                                                 "watsonx Orchestrate Skills"
+                                                                             ],
+                                                                    "summary":  "Get unusual energy consumption events",
+                                                                    "description":  "Returns a list of anomalous electricity consumption events detected in the past 30 days. Each anomaly includes which appliance behaved unusually, when it happened, how much it consumed, and a plain-English explanation. Use this to answer questions like \u0027What was unusual about my energy use recently?\u0027",
+                                                                    "operationId":  "getEnergyAnomalies",
+                                                                    "security":  [
+                                                                                     {
+                                                                                         "APIKeyHeader":  [
+
+                                                                                                          ]
+                                                                                     }
+                                                                                 ],
+                                                                    "parameters":  [
+                                                                                       {
+                                                                                           "name":  "days",
+                                                                                           "in":  "query",
+                                                                                           "required":  false,
+                                                                                           "schema":  {
+                                                                                                          "type":  "integer",
+                                                                                                          "default":  30,
+                                                                                                          "title":  "Days"
+                                                                                                      }
+                                                                                       }
+                                                                                   ],
+                                                                    "responses":  {
+                                                                                      "200":  {
+                                                                                                  "description":  "Successful Response",
+                                                                                                  "content":  {
+                                                                                                                  "application/json":  {
+                                                                                                                                           "schema":  {
+                                                                                                                                                          "$ref":  "#/components/schemas/AnomalyResponse"
+                                                                                                                                                      }
+                                                                                                                                       }
+                                                                                                              }
+                                                                                              },
+                                                                                      "422":  {
+                                                                                                  "description":  "Validation Error",
+                                                                                                  "content":  {
+                                                                                                                  "application/json":  {
+                                                                                                                                           "schema":  {
+                                                                                                                                                          "$ref":  "#/components/schemas/HTTPValidationError"
+                                                                                                                                                      }
+                                                                                                                                       }
+                                                                                                              }
+                                                                                              }
+                                                                                  }
+                                                                }
+                                                    },
+                  "/api/v1/orchestrate/recommendations":  {
+                                                              "get":  {
+                                                                          "tags":  [
+                                                                                       "watsonx Orchestrate Skills"
+                                                                                   ],
+                                                                          "summary":  "Get AI-powered energy saving recommendations",
+                                                                          "description":  "Uses IBM Granite to generate personalized electricity-saving tips based on the household\u0027s actual appliance data, consumption patterns, and anomalies. Use this to answer questions like \u0027How can I lower my electricity bill?\u0027 or \u0027What are some tips to save energy at home?\u0027",
+                                                                          "operationId":  "getEnergySavingRecommendations",
+                                                                          "responses":  {
+                                                                                            "200":  {
+                                                                                                        "description":  "Successful Response",
+                                                                                                        "content":  {
+                                                                                                                        "application/json":  {
+                                                                                                                                                 "schema":  {
+                                                                                                                                                                "$ref":  "#/components/schemas/RecommendationsResponse"
+                                                                                                                                                            }
+                                                                                                                                             }
+                                                                                                                    }
+                                                                                                    }
+                                                                                        },
+                                                                          "security":  [
+                                                                                           {
+                                                                                               "APIKeyHeader":  [
+
+                                                                                                                ]
+                                                                                           }
+                                                                                       ]
+                                                                      }
+                                                          },
+                  "/api/v1/orchestrate/chat":  {
+                                                   "post":  {
+                                                                "tags":  [
+                                                                             "watsonx Orchestrate Skills"
+                                                                         ],
+                                                                "summary":  "Chat with WattWise AI energy advisor",
+                                                                "description":  "Send a natural language message to the WattWise AI energy advisor powered by IBM Granite. The advisor has full context of the household\u0027s energy data and can answer questions, provide explanations, give tips, and interpret consumption patterns. Use this for any free-form energy question from the user.",
+                                                                "operationId":  "chatWithEnergyAdvisor",
+                                                                "requestBody":  {
+                                                                                    "content":  {
+                                                                                                    "application/json":  {
+                                                                                                                             "schema":  {
+                                                                                                                                            "$ref":  "#/components/schemas/app__api__v1__orchestrate__ChatRequest"
+                                                                                                                                        }
+                                                                                                                         }
+                                                                                                },
+                                                                                    "required":  true
+                                                                                },
+                                                                "responses":  {
+                                                                                  "200":  {
+                                                                                              "description":  "Successful Response",
+                                                                                              "content":  {
+                                                                                                              "application/json":  {
+                                                                                                                                       "schema":  {
+                                                                                                                                                      "$ref":  "#/components/schemas/app__api__v1__orchestrate__ChatResponse"
+                                                                                                                                                  }
+                                                                                                                                   }
+                                                                                                          }
+                                                                                          },
+                                                                                  "422":  {
+                                                                                              "description":  "Validation Error",
+                                                                                              "content":  {
+                                                                                                              "application/json":  {
+                                                                                                                                       "schema":  {
+                                                                                                                                                      "$ref":  "#/components/schemas/HTTPValidationError"
+                                                                                                                                                  }
+                                                                                                                                   }
+                                                                                                          }
+                                                                                          }
+                                                                              },
+                                                                "security":  [
+                                                                                 {
+                                                                                     "APIKeyHeader":  [
+
+                                                                                                      ]
+                                                                                 }
+                                                                             ]
+                                                            }
+                                               }
+              },
+    "components":  {
+                       "schemas":  {
+                                       "AnomalyItem":  {
+                                                           "properties":  {
+                                                                              "appliance_name":  {
+                                                                                                     "type":  "string",
+                                                                                                     "title":  "Appliance Name"
+                                                                                                 },
+                                                                              "log_date":  {
+                                                                                               "type":  "string",
+                                                                                               "title":  "Log Date"
+                                                                                           },
+                                                                              "kwh_consumed":  {
+                                                                                                   "type":  "number",
+                                                                                                   "title":  "Kwh Consumed"
+                                                                                               },
+                                                                              "reason":  {
+                                                                                             "type":  "string",
+                                                                                             "title":  "Reason"
+                                                                                         }
+                                                                          },
+                                                           "type":  "object",
+                                                           "required":  [
+                                                                            "appliance_name",
+                                                                            "log_date",
+                                                                            "kwh_consumed",
+                                                                            "reason"
+                                                                        ],
+                                                           "title":  "AnomalyItem"
+                                                       },
+                                       "AnomalyResponse":  {
+                                                               "properties":  {
+                                                                                  "total_anomalies":  {
+                                                                                                          "type":  "integer",
+                                                                                                          "title":  "Total Anomalies"
+                                                                                                      },
+                                                                                  "anomalies":  {
+                                                                                                    "items":  {
+                                                                                                                  "$ref":  "#/components/schemas/AnomalyItem"
+                                                                                                              },
+                                                                                                    "type":  "array",
+                                                                                                    "title":  "Anomalies"
+                                                                                                }
+                                                                              },
+                                                               "type":  "object",
+                                                               "required":  [
+                                                                                "total_anomalies",
+                                                                                "anomalies"
+                                                                            ],
+                                                               "title":  "AnomalyResponse"
+                                                           },
+                                       "ApplianceCreate":  {
+                                                               "properties":  {
+                                                                                  "name":  {
+                                                                                               "type":  "string",
+                                                                                               "maxLength":  100,
+                                                                                               "minLength":  1,
+                                                                                               "title":  "Name"
+                                                                                           },
+                                                                                  "category":  {
+                                                                                                   "type":  "string",
+                                                                                                   "maxLength":  50,
+                                                                                                   "title":  "Category",
+                                                                                                   "default":  "other"
+                                                                                               },
+                                                                                  "wattage":  {
+                                                                                                  "type":  "number",
+                                                                                                  "exclusiveMinimum":  0.0,
+                                                                                                  "title":  "Wattage"
+                                                                                              },
+                                                                                  "daily_hours":  {
+                                                                                                      "type":  "number",
+                                                                                                      "maximum":  24.0,
+                                                                                                      "minimum":  0.0,
+                                                                                                      "title":  "Daily Hours",
+                                                                                                      "default":  1.0
+                                                                                                  },
+                                                                                  "quantity":  {
+                                                                                                   "type":  "integer",
+                                                                                                   "minimum":  1.0,
+                                                                                                   "title":  "Quantity",
+                                                                                                   "default":  1
+                                                                                               },
+                                                                                  "is_active":  {
+                                                                                                    "type":  "boolean",
+                                                                                                    "title":  "Is Active",
+                                                                                                    "default":  true
+                                                                                                },
+                                                                                  "room":  {
+                                                                                               "anyOf":  [
+                                                                                                             {
+                                                                                                                 "type":  "string",
+                                                                                                                 "maxLength":  50
+                                                                                                             },
+                                                                                                             {
+                                                                                                                 "type":  "null"
+                                                                                                             }
+                                                                                                         ],
+                                                                                               "title":  "Room"
+                                                                                           }
+                                                                              },
+                                                               "type":  "object",
+                                                               "required":  [
+                                                                                "name",
+                                                                                "wattage"
+                                                                            ],
+                                                               "title":  "ApplianceCreate"
+                                                           },
+                                       "ApplianceListItem":  {
+                                                                 "properties":  {
+                                                                                    "id":  {
+                                                                                               "type":  "integer",
+                                                                                               "title":  "Id"
+                                                                                           },
+                                                                                    "name":  {
+                                                                                                 "type":  "string",
+                                                                                                 "title":  "Name"
+                                                                                             },
+                                                                                    "category":  {
+                                                                                                     "type":  "string",
+                                                                                                     "title":  "Category"
+                                                                                                 },
+                                                                                    "wattage_watts":  {
+                                                                                                          "type":  "number",
+                                                                                                          "title":  "Wattage Watts"
+                                                                                                      },
+                                                                                    "daily_hours":  {
+                                                                                                        "type":  "number",
+                                                                                                        "title":  "Daily Hours"
+                                                                                                    },
+                                                                                    "daily_kwh":  {
+                                                                                                      "type":  "number",
+                                                                                                      "title":  "Daily Kwh"
+                                                                                                  },
+                                                                                    "monthly_kwh":  {
+                                                                                                        "type":  "number",
+                                                                                                        "title":  "Monthly Kwh"
+                                                                                                    },
+                                                                                    "room":  {
+                                                                                                 "anyOf":  [
+                                                                                                               {
+                                                                                                                   "type":  "string"
+                                                                                                               },
+                                                                                                               {
+                                                                                                                   "type":  "null"
+                                                                                                               }
+                                                                                                           ],
+                                                                                                 "title":  "Room"
+                                                                                             },
+                                                                                    "is_active":  {
+                                                                                                      "type":  "boolean",
+                                                                                                      "title":  "Is Active"
+                                                                                                  }
+                                                                                },
+                                                                 "type":  "object",
+                                                                 "required":  [
+                                                                                  "id",
+                                                                                  "name",
+                                                                                  "category",
+                                                                                  "wattage_watts",
+                                                                                  "daily_hours",
+                                                                                  "daily_kwh",
+                                                                                  "monthly_kwh",
+                                                                                  "room",
+                                                                                  "is_active"
+                                                                              ],
+                                                                 "title":  "ApplianceListItem"
+                                                             },
+                                       "ApplianceListResponse":  {
+                                                                     "properties":  {
+                                                                                        "total":  {
+                                                                                                      "type":  "integer",
+                                                                                                      "title":  "Total",
+                                                                                                      "description":  "Total number of appliances"
+                                                                                                  },
+                                                                                        "appliances":  {
+                                                                                                           "items":  {
+                                                                                                                         "$ref":  "#/components/schemas/ApplianceListItem"
+                                                                                                                     },
+                                                                                                           "type":  "array",
+                                                                                                           "title":  "Appliances"
+                                                                                                       }
+                                                                                    },
+                                                                     "type":  "object",
+                                                                     "required":  [
+                                                                                      "total",
+                                                                                      "appliances"
+                                                                                  ],
+                                                                     "title":  "ApplianceListResponse"
+                                                                 },
+                                       "ApplianceOut":  {
+                                                            "properties":  {
+                                                                               "name":  {
+                                                                                            "type":  "string",
+                                                                                            "maxLength":  100,
+                                                                                            "minLength":  1,
+                                                                                            "title":  "Name"
+                                                                                        },
+                                                                               "category":  {
+                                                                                                "type":  "string",
+                                                                                                "maxLength":  50,
+                                                                                                "title":  "Category",
+                                                                                                "default":  "other"
+                                                                                            },
+                                                                               "wattage":  {
+                                                                                               "type":  "number",
+                                                                                               "exclusiveMinimum":  0.0,
+                                                                                               "title":  "Wattage"
+                                                                                           },
+                                                                               "daily_hours":  {
+                                                                                                   "type":  "number",
+                                                                                                   "maximum":  24.0,
+                                                                                                   "minimum":  0.0,
+                                                                                                   "title":  "Daily Hours",
+                                                                                                   "default":  1.0
+                                                                                               },
+                                                                               "quantity":  {
+                                                                                                "type":  "integer",
+                                                                                                "minimum":  1.0,
+                                                                                                "title":  "Quantity",
+                                                                                                "default":  1
+                                                                                            },
+                                                                               "is_active":  {
+                                                                                                 "type":  "boolean",
+                                                                                                 "title":  "Is Active",
+                                                                                                 "default":  true
+                                                                                             },
+                                                                               "room":  {
+                                                                                            "anyOf":  [
+                                                                                                          {
+                                                                                                              "type":  "string",
+                                                                                                              "maxLength":  50
+                                                                                                          },
+                                                                                                          {
+                                                                                                              "type":  "null"
+                                                                                                          }
+                                                                                                      ],
+                                                                                            "title":  "Room"
+                                                                                        },
+                                                                               "id":  {
+                                                                                          "type":  "integer",
+                                                                                          "title":  "Id"
+                                                                                      },
+                                                                               "created_at":  {
+                                                                                                  "type":  "string",
+                                                                                                  "format":  "date-time",
+                                                                                                  "title":  "Created At"
+                                                                                              },
+                                                                               "updated_at":  {
+                                                                                                  "type":  "string",
+                                                                                                  "format":  "date-time",
+                                                                                                  "title":  "Updated At"
+                                                                                              },
+                                                                               "daily_kwh":  {
+                                                                                                 "type":  "number",
+                                                                                                 "title":  "Daily Kwh",
+                                                                                                 "default":  0.0
+                                                                                             },
+                                                                               "monthly_kwh":  {
+                                                                                                   "type":  "number",
+                                                                                                   "title":  "Monthly Kwh",
+                                                                                                   "default":  0.0
+                                                                                               }
+                                                                           },
+                                                            "type":  "object",
+                                                            "required":  [
+                                                                             "name",
+                                                                             "wattage",
+                                                                             "id",
+                                                                             "created_at",
+                                                                             "updated_at"
+                                                                         ],
+                                                            "title":  "ApplianceOut"
+                                                        },
+                                       "ApplianceUpdate":  {
+                                                               "properties":  {
+                                                                                  "name":  {
+                                                                                               "anyOf":  [
+                                                                                                             {
+                                                                                                                 "type":  "string",
+                                                                                                                 "maxLength":  100,
+                                                                                                                 "minLength":  1
+                                                                                                             },
+                                                                                                             {
+                                                                                                                 "type":  "null"
+                                                                                                             }
+                                                                                                         ],
+                                                                                               "title":  "Name"
+                                                                                           },
+                                                                                  "category":  {
+                                                                                                   "anyOf":  [
+                                                                                                                 {
+                                                                                                                     "type":  "string",
+                                                                                                                     "maxLength":  50
+                                                                                                                 },
+                                                                                                                 {
+                                                                                                                     "type":  "null"
+                                                                                                                 }
+                                                                                                             ],
+                                                                                                   "title":  "Category"
+                                                                                               },
+                                                                                  "wattage":  {
+                                                                                                  "anyOf":  [
+                                                                                                                {
+                                                                                                                    "type":  "number",
+                                                                                                                    "exclusiveMinimum":  0.0
+                                                                                                                },
+                                                                                                                {
+                                                                                                                    "type":  "null"
+                                                                                                                }
+                                                                                                            ],
+                                                                                                  "title":  "Wattage"
+                                                                                              },
+                                                                                  "daily_hours":  {
+                                                                                                      "anyOf":  [
+                                                                                                                    {
+                                                                                                                        "type":  "number",
+                                                                                                                        "maximum":  24.0,
+                                                                                                                        "minimum":  0.0
+                                                                                                                    },
+                                                                                                                    {
+                                                                                                                        "type":  "null"
+                                                                                                                    }
+                                                                                                                ],
+                                                                                                      "title":  "Daily Hours"
+                                                                                                  },
+                                                                                  "quantity":  {
+                                                                                                   "anyOf":  [
+                                                                                                                 {
+                                                                                                                     "type":  "integer",
+                                                                                                                     "minimum":  1.0
+                                                                                                                 },
+                                                                                                                 {
+                                                                                                                     "type":  "null"
+                                                                                                                 }
+                                                                                                             ],
+                                                                                                   "title":  "Quantity"
+                                                                                               },
+                                                                                  "is_active":  {
+                                                                                                    "anyOf":  [
+                                                                                                                  {
+                                                                                                                      "type":  "boolean"
+                                                                                                                  },
+                                                                                                                  {
+                                                                                                                      "type":  "null"
+                                                                                                                  }
+                                                                                                              ],
+                                                                                                    "title":  "Is Active"
+                                                                                                },
+                                                                                  "room":  {
+                                                                                               "anyOf":  [
+                                                                                                             {
+                                                                                                                 "type":  "string",
+                                                                                                                 "maxLength":  50
+                                                                                                             },
+                                                                                                             {
+                                                                                                                 "type":  "null"
+                                                                                                             }
+                                                                                                         ],
+                                                                                               "title":  "Room"
+                                                                                           }
+                                                                              },
+                                                               "type":  "object",
+                                                               "title":  "ApplianceUpdate"
+                                                           },
+                                       "BillEstimate":  {
+                                                            "properties":  {
+                                                                               "year":  {
+                                                                                            "type":  "integer",
+                                                                                            "title":  "Year"
+                                                                                        },
+                                                                               "month":  {
+                                                                                             "type":  "integer",
+                                                                                             "title":  "Month"
+                                                                                         },
+                                                                               "days_elapsed":  {
+                                                                                                    "type":  "integer",
+                                                                                                    "title":  "Days Elapsed"
+                                                                                                },
+                                                                               "days_in_month":  {
+                                                                                                     "type":  "integer",
+                                                                                                     "title":  "Days In Month"
+                                                                                                 },
+                                                                               "kwh_so_far":  {
+                                                                                                  "type":  "number",
+                                                                                                  "title":  "Kwh So Far"
+                                                                                              },
+                                                                               "projected_kwh":  {
+                                                                                                     "type":  "number",
+                                                                                                     "title":  "Projected Kwh"
+                                                                                                 },
+                                                                               "projected_cost":  {
+                                                                                                      "type":  "number",
+                                                                                                      "title":  "Projected Cost"
+                                                                                                  },
+                                                                               "tariff_rate":  {
+                                                                                                   "type":  "number",
+                                                                                                   "title":  "Tariff Rate"
+                                                                                               },
+                                                                               "currency":  {
+                                                                                                "type":  "string",
+                                                                                                "title":  "Currency"
+                                                                                            },
+                                                                               "budget":  {
+                                                                                              "anyOf":  [
+                                                                                                            {
+                                                                                                                "type":  "number"
+                                                                                                            },
+                                                                                                            {
+                                                                                                                "type":  "null"
+                                                                                                            }
+                                                                                                        ],
+                                                                                              "title":  "Budget"
+                                                                                          },
+                                                                               "budget_used_pct":  {
+                                                                                                       "anyOf":  [
+                                                                                                                     {
+                                                                                                                         "type":  "number"
+                                                                                                                     },
+                                                                                                                     {
+                                                                                                                         "type":  "null"
+                                                                                                                     }
+                                                                                                                 ],
+                                                                                                       "title":  "Budget Used Pct"
+                                                                                                   }
+                                                                           },
+                                                            "type":  "object",
+                                                            "required":  [
+                                                                             "year",
+                                                                             "month",
+                                                                             "days_elapsed",
+                                                                             "days_in_month",
+                                                                             "kwh_so_far",
+                                                                             "projected_kwh",
+                                                                             "projected_cost",
+                                                                             "tariff_rate",
+                                                                             "currency",
+                                                                             "budget",
+                                                                             "budget_used_pct"
+                                                                         ],
+                                                            "title":  "BillEstimate"
+                                                        },
+                                       "BillEstimateResponse":  {
+                                                                    "properties":  {
+                                                                                       "year":  {
+                                                                                                    "type":  "integer",
+                                                                                                    "title":  "Year"
+                                                                                                },
+                                                                                       "month":  {
+                                                                                                     "type":  "integer",
+                                                                                                     "title":  "Month"
+                                                                                                 },
+                                                                                       "days_elapsed":  {
+                                                                                                            "type":  "integer",
+                                                                                                            "title":  "Days Elapsed"
+                                                                                                        },
+                                                                                       "days_in_month":  {
+                                                                                                             "type":  "integer",
+                                                                                                             "title":  "Days In Month"
+                                                                                                         },
+                                                                                       "kwh_so_far":  {
+                                                                                                          "type":  "number",
+                                                                                                          "title":  "Kwh So Far",
+                                                                                                          "description":  "kWh consumed from month start to today"
+                                                                                                      },
+                                                                                       "projected_kwh":  {
+                                                                                                             "type":  "number",
+                                                                                                             "title":  "Projected Kwh",
+                                                                                                             "description":  "Projected kWh for the full month based on daily average"
+                                                                                                         },
+                                                                                       "projected_cost":  {
+                                                                                                              "type":  "number",
+                                                                                                              "title":  "Projected Cost",
+                                                                                                              "description":  "Projected electricity bill for the full month"
+                                                                                                          },
+                                                                                       "tariff_rate":  {
+                                                                                                           "type":  "number",
+                                                                                                           "title":  "Tariff Rate",
+                                                                                                           "description":  "Electricity tariff rate per kWh"
+                                                                                                       },
+                                                                                       "currency":  {
+                                                                                                        "type":  "string",
+                                                                                                        "title":  "Currency"
+                                                                                                    },
+                                                                                       "budget":  {
+                                                                                                      "anyOf":  [
+                                                                                                                    {
+                                                                                                                        "type":  "number"
+                                                                                                                    },
+                                                                                                                    {
+                                                                                                                        "type":  "null"
+                                                                                                                    }
+                                                                                                                ],
+                                                                                                      "title":  "Budget",
+                                                                                                      "description":  "Monthly budget set by user, if any"
+                                                                                                  },
+                                                                                       "budget_used_pct":  {
+                                                                                                               "anyOf":  [
+                                                                                                                             {
+                                                                                                                                 "type":  "number"
+                                                                                                                             },
+                                                                                                                             {
+                                                                                                                                 "type":  "null"
+                                                                                                                             }
+                                                                                                                         ],
+                                                                                                               "title":  "Budget Used Pct",
+                                                                                                               "description":  "Percentage of budget already used (projected)"
+                                                                                                           },
+                                                                                       "status":  {
+                                                                                                      "type":  "string",
+                                                                                                      "title":  "Status",
+                                                                                                      "description":  "Budget status: on_track | warning | over_budget | no_budget"
+                                                                                                  }
+                                                                                   },
+                                                                    "type":  "object",
+                                                                    "required":  [
+                                                                                     "year",
+                                                                                     "month",
+                                                                                     "days_elapsed",
+                                                                                     "days_in_month",
+                                                                                     "kwh_so_far",
+                                                                                     "projected_kwh",
+                                                                                     "projected_cost",
+                                                                                     "tariff_rate",
+                                                                                     "currency",
+                                                                                     "status"
+                                                                                 ],
+                                                                    "title":  "BillEstimateResponse"
+                                                                },
+                                       "BillOut":  {
+                                                       "properties":  {
+                                                                          "id":  {
+                                                                                     "type":  "integer",
+                                                                                     "title":  "Id"
+                                                                                 },
+                                                                          "year":  {
+                                                                                       "type":  "integer",
+                                                                                       "title":  "Year"
+                                                                                   },
+                                                                          "month":  {
+                                                                                        "type":  "integer",
+                                                                                        "title":  "Month"
+                                                                                    },
+                                                                          "total_kwh":  {
+                                                                                            "type":  "number",
+                                                                                            "title":  "Total Kwh"
+                                                                                        },
+                                                                          "estimated_cost":  {
+                                                                                                 "type":  "number",
+                                                                                                 "title":  "Estimated Cost"
+                                                                                             },
+                                                                          "tariff_rate":  {
+                                                                                              "type":  "number",
+                                                                                              "title":  "Tariff Rate"
+                                                                                          },
+                                                                          "breakdown":  {
+                                                                                            "anyOf":  [
+                                                                                                          {
+                                                                                                              "items":  {
+                                                                                                                            "additionalProperties":  true,
+                                                                                                                            "type":  "object"
+                                                                                                                        },
+                                                                                                              "type":  "array"
+                                                                                                          },
+                                                                                                          {
+                                                                                                              "type":  "null"
+                                                                                                          }
+                                                                                                      ],
+                                                                                            "title":  "Breakdown"
+                                                                                        },
+                                                                          "ai_summary":  {
+                                                                                             "anyOf":  [
+                                                                                                           {
+                                                                                                               "type":  "string"
+                                                                                                           },
+                                                                                                           {
+                                                                                                               "type":  "null"
+                                                                                                           }
+                                                                                                       ],
+                                                                                             "title":  "Ai Summary"
+                                                                                         },
+                                                                          "created_at":  {
+                                                                                             "type":  "string",
+                                                                                             "format":  "date-time",
+                                                                                             "title":  "Created At"
+                                                                                         }
+                                                                      },
+                                                       "type":  "object",
+                                                       "required":  [
+                                                                        "id",
+                                                                        "year",
+                                                                        "month",
+                                                                        "total_kwh",
+                                                                        "estimated_cost",
+                                                                        "tariff_rate",
+                                                                        "ai_summary",
+                                                                        "created_at"
+                                                                    ],
+                                                       "title":  "BillOut"
+                                                   },
+                                       "ChatMessage":  {
+                                                           "properties":  {
+                                                                              "role":  {
+                                                                                           "type":  "string",
+                                                                                           "title":  "Role"
+                                                                                       },
+                                                                              "content":  {
+                                                                                              "type":  "string",
+                                                                                              "title":  "Content"
+                                                                                          },
+                                                                              "timestamp":  {
+                                                                                                "type":  "string",
+                                                                                                "title":  "Timestamp"
+                                                                                            }
+                                                                          },
+                                                           "type":  "object",
+                                                           "required":  [
+                                                                            "role",
+                                                                            "content",
+                                                                            "timestamp"
+                                                                        ],
+                                                           "title":  "ChatMessage"
+                                                       },
+                                       "ChatSessionOut":  {
+                                                              "properties":  {
+                                                                                 "id":  {
+                                                                                            "type":  "integer",
+                                                                                            "title":  "Id"
+                                                                                        },
+                                                                                 "title":  {
+                                                                                               "type":  "string",
+                                                                                               "title":  "Title"
+                                                                                           },
+                                                                                 "messages":  {
+                                                                                                  "items":  {
+                                                                                                                "$ref":  "#/components/schemas/ChatMessage"
+                                                                                                            },
+                                                                                                  "type":  "array",
+                                                                                                  "title":  "Messages"
+                                                                                              },
+                                                                                 "created_at":  {
+                                                                                                    "type":  "string",
+                                                                                                    "format":  "date-time",
+                                                                                                    "title":  "Created At"
+                                                                                                },
+                                                                                 "updated_at":  {
+                                                                                                    "type":  "string",
+                                                                                                    "format":  "date-time",
+                                                                                                    "title":  "Updated At"
+                                                                                                }
+                                                                             },
+                                                              "type":  "object",
+                                                              "required":  [
+                                                                               "id",
+                                                                               "title",
+                                                                               "messages",
+                                                                               "created_at",
+                                                                               "updated_at"
+                                                                           ],
+                                                              "title":  "ChatSessionOut"
+                                                          },
+                                       "ConsumptionLogCreate":  {
+                                                                    "properties":  {
+                                                                                       "appliance_id":  {
+                                                                                                            "type":  "integer",
+                                                                                                            "title":  "Appliance Id"
+                                                                                                        },
+                                                                                       "log_date":  {
+                                                                                                        "type":  "string",
+                                                                                                        "format":  "date",
+                                                                                                        "title":  "Log Date"
+                                                                                                    },
+                                                                                       "hours_used":  {
+                                                                                                          "type":  "number",
+                                                                                                          "maximum":  24.0,
+                                                                                                          "minimum":  0.0,
+                                                                                                          "title":  "Hours Used"
+                                                                                                      }
+                                                                                   },
+                                                                    "type":  "object",
+                                                                    "required":  [
+                                                                                     "appliance_id",
+                                                                                     "log_date",
+                                                                                     "hours_used"
+                                                                                 ],
+                                                                    "title":  "ConsumptionLogCreate"
+                                                                },
+                                       "ConsumptionLogOut":  {
+                                                                 "properties":  {
+                                                                                    "id":  {
+                                                                                               "type":  "integer",
+                                                                                               "title":  "Id"
+                                                                                           },
+                                                                                    "appliance_id":  {
+                                                                                                         "type":  "integer",
+                                                                                                         "title":  "Appliance Id"
+                                                                                                     },
+                                                                                    "appliance_name":  {
+                                                                                                           "type":  "string",
+                                                                                                           "title":  "Appliance Name",
+                                                                                                           "default":  ""
+                                                                                                       },
+                                                                                    "log_date":  {
+                                                                                                     "type":  "string",
+                                                                                                     "format":  "date",
+                                                                                                     "title":  "Log Date"
+                                                                                                 },
+                                                                                    "hours_used":  {
+                                                                                                       "type":  "number",
+                                                                                                       "title":  "Hours Used"
+                                                                                                   },
+                                                                                    "kwh_consumed":  {
+                                                                                                         "type":  "number",
+                                                                                                         "title":  "Kwh Consumed"
+                                                                                                     },
+                                                                                    "is_anomaly":  {
+                                                                                                       "type":  "boolean",
+                                                                                                       "title":  "Is Anomaly"
+                                                                                                   },
+                                                                                    "anomaly_reason":  {
+                                                                                                           "anyOf":  [
+                                                                                                                         {
+                                                                                                                             "type":  "string"
+                                                                                                                         },
+                                                                                                                         {
+                                                                                                                             "type":  "null"
+                                                                                                                         }
+                                                                                                                     ],
+                                                                                                           "title":  "Anomaly Reason"
+                                                                                                       },
+                                                                                    "created_at":  {
+                                                                                                       "type":  "string",
+                                                                                                       "format":  "date-time",
+                                                                                                       "title":  "Created At"
+                                                                                                   }
+                                                                                },
+                                                                 "type":  "object",
+                                                                 "required":  [
+                                                                                  "id",
+                                                                                  "appliance_id",
+                                                                                  "log_date",
+                                                                                  "hours_used",
+                                                                                  "kwh_consumed",
+                                                                                  "is_anomaly",
+                                                                                  "anomaly_reason",
+                                                                                  "created_at"
+                                                                              ],
+                                                                 "title":  "ConsumptionLogOut"
+                                                             },
+                                       "DashboardSummary":  {
+                                                                "properties":  {
+                                                                                   "today_kwh":  {
+                                                                                                     "type":  "number",
+                                                                                                     "title":  "Today Kwh"
+                                                                                                 },
+                                                                                   "today_cost":  {
+                                                                                                      "type":  "number",
+                                                                                                      "title":  "Today Cost"
+                                                                                                  },
+                                                                                   "month_kwh":  {
+                                                                                                     "type":  "number",
+                                                                                                     "title":  "Month Kwh"
+                                                                                                 },
+                                                                                   "month_cost":  {
+                                                                                                      "type":  "number",
+                                                                                                      "title":  "Month Cost"
+                                                                                                  },
+                                                                                   "month_budget":  {
+                                                                                                        "anyOf":  [
+                                                                                                                      {
+                                                                                                                          "type":  "number"
+                                                                                                                      },
+                                                                                                                      {
+                                                                                                                          "type":  "null"
+                                                                                                                      }
+                                                                                                                  ],
+                                                                                                        "title":  "Month Budget"
+                                                                                                    },
+                                                                                   "budget_used_pct":  {
+                                                                                                           "anyOf":  [
+                                                                                                                         {
+                                                                                                                             "type":  "number"
+                                                                                                                         },
+                                                                                                                         {
+                                                                                                                             "type":  "null"
+                                                                                                                         }
+                                                                                                                     ],
+                                                                                                           "title":  "Budget Used Pct"
+                                                                                                       },
+                                                                                   "top_consumers":  {
+                                                                                                         "items":  {
+                                                                                                                       "additionalProperties":  true,
+                                                                                                                       "type":  "object"
+                                                                                                                   },
+                                                                                                         "type":  "array",
+                                                                                                         "title":  "Top Consumers"
+                                                                                                     },
+                                                                                   "active_appliances":  {
+                                                                                                             "type":  "integer",
+                                                                                                             "title":  "Active Appliances"
+                                                                                                         },
+                                                                                   "anomaly_count_this_month":  {
+                                                                                                                    "type":  "integer",
+                                                                                                                    "title":  "Anomaly Count This Month"
+                                                                                                                }
+                                                                               },
+                                                                "type":  "object",
+                                                                "required":  [
+                                                                                 "today_kwh",
+                                                                                 "today_cost",
+                                                                                 "month_kwh",
+                                                                                 "month_cost",
+                                                                                 "month_budget",
+                                                                                 "budget_used_pct",
+                                                                                 "top_consumers",
+                                                                                 "active_appliances",
+                                                                                 "anomaly_count_this_month"
+                                                                             ],
+                                                                "title":  "DashboardSummary"
+                                                            },
+                                       "EnergySnapshot":  {
+                                                              "properties":  {
+                                                                                 "household_name":  {
+                                                                                                        "type":  "string",
+                                                                                                        "title":  "Household Name",
+                                                                                                        "description":  "Name of the household"
+                                                                                                    },
+                                                                                 "active_appliances":  {
+                                                                                                           "type":  "integer",
+                                                                                                           "title":  "Active Appliances",
+                                                                                                           "description":  "Number of active appliances tracked"
+                                                                                                       },
+                                                                                 "today_kwh":  {
+                                                                                                   "type":  "number",
+                                                                                                   "title":  "Today Kwh",
+                                                                                                   "description":  "Total kWh consumed today across all appliances"
+                                                                                               },
+                                                                                 "today_cost_usd":  {
+                                                                                                        "type":  "number",
+                                                                                                        "title":  "Today Cost Usd",
+                                                                                                        "description":  "Estimated cost of today\u0027s consumption"
+                                                                                                    },
+                                                                                 "month_kwh":  {
+                                                                                                   "type":  "number",
+                                                                                                   "title":  "Month Kwh",
+                                                                                                   "description":  "Total kWh consumed this month so far"
+                                                                                               },
+                                                                                 "month_cost_usd":  {
+                                                                                                        "type":  "number",
+                                                                                                        "title":  "Month Cost Usd",
+                                                                                                        "description":  "Estimated cost of this month\u0027s consumption so far"
+                                                                                                    },
+                                                                                 "projected_month_kwh":  {
+                                                                                                             "type":  "number",
+                                                                                                             "title":  "Projected Month Kwh",
+                                                                                                             "description":  "Projected total kWh for end of this month"
+                                                                                                         },
+                                                                                 "projected_month_cost_usd":  {
+                                                                                                                  "type":  "number",
+                                                                                                                  "title":  "Projected Month Cost Usd",
+                                                                                                                  "description":  "Projected total bill for end of this month"
+                                                                                                              },
+                                                                                 "currency":  {
+                                                                                                  "type":  "string",
+                                                                                                  "title":  "Currency",
+                                                                                                  "description":  "Currency code for cost values (e.g. USD, INR)"
+                                                                                              },
+                                                                                 "top_consumer_name":  {
+                                                                                                           "type":  "string",
+                                                                                                           "title":  "Top Consumer Name",
+                                                                                                           "description":  "Name of the appliance using the most electricity this month"
+                                                                                                       },
+                                                                                 "top_consumer_kwh":  {
+                                                                                                          "type":  "number",
+                                                                                                          "title":  "Top Consumer Kwh",
+                                                                                                          "description":  "kWh used by the top consumer this month"
+                                                                                                      },
+                                                                                 "anomaly_count":  {
+                                                                                                       "type":  "integer",
+                                                                                                       "title":  "Anomaly Count",
+                                                                                                       "description":  "Number of unusual consumption events detected this month"
+                                                                                                   }
+                                                                             },
+                                                              "type":  "object",
+                                                              "required":  [
+                                                                               "household_name",
+                                                                               "active_appliances",
+                                                                               "today_kwh",
+                                                                               "today_cost_usd",
+                                                                               "month_kwh",
+                                                                               "month_cost_usd",
+                                                                               "projected_month_kwh",
+                                                                               "projected_month_cost_usd",
+                                                                               "currency",
+                                                                               "top_consumer_name",
+                                                                               "top_consumer_kwh",
+                                                                               "anomaly_count"
+                                                                           ],
+                                                              "title":  "EnergySnapshot"
+                                                          },
+                                       "HTTPValidationError":  {
+                                                                   "properties":  {
+                                                                                      "detail":  {
+                                                                                                     "items":  {
+                                                                                                                   "$ref":  "#/components/schemas/ValidationError"
+                                                                                                               },
+                                                                                                     "type":  "array",
+                                                                                                     "title":  "Detail"
+                                                                                                 }
+                                                                                  },
+                                                                   "type":  "object",
+                                                                   "title":  "HTTPValidationError"
+                                                               },
+                                       "RecommendationsResponse":  {
+                                                                       "properties":  {
+                                                                                          "recommendations":  {
+                                                                                                                  "type":  "string",
+                                                                                                                  "title":  "Recommendations",
+                                                                                                                  "description":  "AI-generated energy saving recommendations from IBM Granite"
+                                                                                                              },
+                                                                                          "household_context_summary":  {
+                                                                                                                            "type":  "string",
+                                                                                                                            "title":  "Household Context Summary",
+                                                                                                                            "description":  "Summary of the household data used to generate tips"
+                                                                                                                        }
+                                                                                      },
+                                                                       "type":  "object",
+                                                                       "required":  [
+                                                                                        "recommendations",
+                                                                                        "household_context_summary"
+                                                                                    ],
+                                                                       "title":  "RecommendationsResponse"
+                                                                   },
+                                       "ReportOut":  {
+                                                         "properties":  {
+                                                                            "id":  {
+                                                                                       "type":  "integer",
+                                                                                       "title":  "Id"
+                                                                                   },
+                                                                            "year":  {
+                                                                                         "type":  "integer",
+                                                                                         "title":  "Year"
+                                                                                     },
+                                                                            "month":  {
+                                                                                          "type":  "integer",
+                                                                                          "title":  "Month"
+                                                                                      },
+                                                                            "total_kwh":  {
+                                                                                              "type":  "number",
+                                                                                              "title":  "Total Kwh"
+                                                                                          },
+                                                                            "estimated_cost":  {
+                                                                                                   "type":  "number",
+                                                                                                   "title":  "Estimated Cost"
+                                                                                               },
+                                                                            "ai_summary":  {
+                                                                                               "type":  "string",
+                                                                                               "title":  "Ai Summary"
+                                                                                           },
+                                                                            "breakdown":  {
+                                                                                              "anyOf":  [
+                                                                                                            {
+                                                                                                                "items":  {
+                                                                                                                              "additionalProperties":  true,
+                                                                                                                              "type":  "object"
+                                                                                                                          },
+                                                                                                                "type":  "array"
+                                                                                                            },
+                                                                                                            {
+                                                                                                                "type":  "null"
+                                                                                                            }
+                                                                                                        ],
+                                                                                              "title":  "Breakdown"
+                                                                                          },
+                                                                            "created_at":  {
+                                                                                               "type":  "string",
+                                                                                               "title":  "Created At"
+                                                                                           }
+                                                                        },
+                                                         "type":  "object",
+                                                         "required":  [
+                                                                          "id",
+                                                                          "year",
+                                                                          "month",
+                                                                          "total_kwh",
+                                                                          "estimated_cost",
+                                                                          "ai_summary",
+                                                                          "breakdown",
+                                                                          "created_at"
+                                                                      ],
+                                                         "title":  "ReportOut"
+                                                     },
+                                       "SettingsOut":  {
+                                                           "properties":  {
+                                                                              "id":  {
+                                                                                         "type":  "integer",
+                                                                                         "title":  "Id"
+                                                                                     },
+                                                                              "household_name":  {
+                                                                                                     "type":  "string",
+                                                                                                     "title":  "Household Name"
+                                                                                                 },
+                                                                              "tariff_rate":  {
+                                                                                                  "type":  "number",
+                                                                                                  "title":  "Tariff Rate"
+                                                                                              },
+                                                                              "currency":  {
+                                                                                               "type":  "string",
+                                                                                               "title":  "Currency"
+                                                                                           },
+                                                                              "timezone":  {
+                                                                                               "type":  "string",
+                                                                                               "title":  "Timezone"
+                                                                                           },
+                                                                              "monthly_budget":  {
+                                                                                                     "anyOf":  [
+                                                                                                                   {
+                                                                                                                       "type":  "number"
+                                                                                                                   },
+                                                                                                                   {
+                                                                                                                       "type":  "null"
+                                                                                                                   }
+                                                                                                               ],
+                                                                                                     "title":  "Monthly Budget"
+                                                                                                 },
+                                                                              "anomaly_threshold_pct":  {
+                                                                                                            "type":  "number",
+                                                                                                            "title":  "Anomaly Threshold Pct"
+                                                                                                        },
+                                                                              "report_day":  {
+                                                                                                 "type":  "integer",
+                                                                                                 "title":  "Report Day"
+                                                                                             }
+                                                                          },
+                                                           "type":  "object",
+                                                           "required":  [
+                                                                            "id",
+                                                                            "household_name",
+                                                                            "tariff_rate",
+                                                                            "currency",
+                                                                            "timezone",
+                                                                            "monthly_budget",
+                                                                            "anomaly_threshold_pct",
+                                                                            "report_day"
+                                                                        ],
+                                                           "title":  "SettingsOut"
+                                                       },
+                                       "SettingsUpdate":  {
+                                                              "properties":  {
+                                                                                 "household_name":  {
+                                                                                                        "anyOf":  [
+                                                                                                                      {
+                                                                                                                          "type":  "string",
+                                                                                                                          "maxLength":  100,
+                                                                                                                          "minLength":  1
+                                                                                                                      },
+                                                                                                                      {
+                                                                                                                          "type":  "null"
+                                                                                                                      }
+                                                                                                                  ],
+                                                                                                        "title":  "Household Name"
+                                                                                                    },
+                                                                                 "tariff_rate":  {
+                                                                                                     "anyOf":  [
+                                                                                                                   {
+                                                                                                                       "type":  "number",
+                                                                                                                       "exclusiveMinimum":  0.0
+                                                                                                                   },
+                                                                                                                   {
+                                                                                                                       "type":  "null"
+                                                                                                                   }
+                                                                                                               ],
+                                                                                                     "title":  "Tariff Rate"
+                                                                                                 },
+                                                                                 "currency":  {
+                                                                                                  "anyOf":  [
+                                                                                                                {
+                                                                                                                    "type":  "string",
+                                                                                                                    "maxLength":  10
+                                                                                                                },
+                                                                                                                {
+                                                                                                                    "type":  "null"
+                                                                                                                }
+                                                                                                            ],
+                                                                                                  "title":  "Currency"
+                                                                                              },
+                                                                                 "timezone":  {
+                                                                                                  "anyOf":  [
+                                                                                                                {
+                                                                                                                    "type":  "string",
+                                                                                                                    "maxLength":  50
+                                                                                                                },
+                                                                                                                {
+                                                                                                                    "type":  "null"
+                                                                                                                }
+                                                                                                            ],
+                                                                                                  "title":  "Timezone"
+                                                                                              },
+                                                                                 "monthly_budget":  {
+                                                                                                        "anyOf":  [
+                                                                                                                      {
+                                                                                                                          "type":  "number",
+                                                                                                                          "minimum":  0.0
+                                                                                                                      },
+                                                                                                                      {
+                                                                                                                          "type":  "null"
+                                                                                                                      }
+                                                                                                                  ],
+                                                                                                        "title":  "Monthly Budget"
+                                                                                                    },
+                                                                                 "anomaly_threshold_pct":  {
+                                                                                                               "anyOf":  [
+                                                                                                                             {
+                                                                                                                                 "type":  "number",
+                                                                                                                                 "maximum":  200.0,
+                                                                                                                                 "minimum":  1.0
+                                                                                                                             },
+                                                                                                                             {
+                                                                                                                                 "type":  "null"
+                                                                                                                             }
+                                                                                                                         ],
+                                                                                                               "title":  "Anomaly Threshold Pct"
+                                                                                                           },
+                                                                                 "report_day":  {
+                                                                                                    "anyOf":  [
+                                                                                                                  {
+                                                                                                                      "type":  "integer",
+                                                                                                                      "maximum":  28.0,
+                                                                                                                      "minimum":  1.0
+                                                                                                                  },
+                                                                                                                  {
+                                                                                                                      "type":  "null"
+                                                                                                                  }
+                                                                                                              ],
+                                                                                                    "title":  "Report Day"
+                                                                                                }
+                                                                             },
+                                                              "type":  "object",
+                                                              "title":  "SettingsUpdate"
+                                                          },
+                                       "ValidationError":  {
+                                                               "properties":  {
+                                                                                  "loc":  {
+                                                                                              "items":  {
+                                                                                                            "anyOf":  [
+                                                                                                                          {
+                                                                                                                              "type":  "string"
+                                                                                                                          },
+                                                                                                                          {
+                                                                                                                              "type":  "integer"
+                                                                                                                          }
+                                                                                                                      ]
+                                                                                                        },
+                                                                                              "type":  "array",
+                                                                                              "title":  "Location"
+                                                                                          },
+                                                                                  "msg":  {
+                                                                                              "type":  "string",
+                                                                                              "title":  "Message"
+                                                                                          },
+                                                                                  "type":  {
+                                                                                               "type":  "string",
+                                                                                               "title":  "Error Type"
+                                                                                           },
+                                                                                  "input":  {
+                                                                                                "title":  "Input"
+                                                                                            },
+                                                                                  "ctx":  {
+                                                                                              "type":  "object",
+                                                                                              "title":  "Context"
+                                                                                          }
+                                                                              },
+                                                               "type":  "object",
+                                                               "required":  [
+                                                                                "loc",
+                                                                                "msg",
+                                                                                "type"
+                                                                            ],
+                                                               "title":  "ValidationError"
+                                                           },
+                                       "app__api__v1__orchestrate__ChatRequest":  {
+                                                                                      "properties":  {
+                                                                                                         "message":  {
+                                                                                                                         "type":  "string",
+                                                                                                                         "title":  "Message",
+                                                                                                                         "description":  "The user\u0027s question or message about their energy usage"
+                                                                                                                     }
+                                                                                                     },
+                                                                                      "type":  "object",
+                                                                                      "required":  [
+                                                                                                       "message"
+                                                                                                   ],
+                                                                                      "title":  "ChatRequest"
+                                                                                  },
+                                       "app__api__v1__orchestrate__ChatResponse":  {
+                                                                                       "properties":  {
+                                                                                                          "reply":  {
+                                                                                                                        "type":  "string",
+                                                                                                                        "title":  "Reply",
+                                                                                                                        "description":  "IBM Granite\u0027s response about the household energy situation"
+                                                                                                                    }
+                                                                                                      },
+                                                                                       "type":  "object",
+                                                                                       "required":  [
+                                                                                                        "reply"
+                                                                                                    ],
+                                                                                       "title":  "ChatResponse"
+                                                                                   },
+                                       "app__schemas__chat__ChatRequest":  {
+                                                                               "properties":  {
+                                                                                                  "message":  {
+                                                                                                                  "type":  "string",
+                                                                                                                  "title":  "Message"
+                                                                                                              },
+                                                                                                  "session_id":  {
+                                                                                                                     "anyOf":  [
+                                                                                                                                   {
+                                                                                                                                       "type":  "integer"
+                                                                                                                                   },
+                                                                                                                                   {
+                                                                                                                                       "type":  "null"
+                                                                                                                                   }
+                                                                                                                               ],
+                                                                                                                     "title":  "Session Id"
+                                                                                                                 }
+                                                                                              },
+                                                                               "type":  "object",
+                                                                               "required":  [
+                                                                                                "message"
+                                                                                            ],
+                                                                               "title":  "ChatRequest"
+                                                                           },
+                                       "app__schemas__chat__ChatResponse":  {
+                                                                                "properties":  {
+                                                                                                   "session_id":  {
+                                                                                                                      "type":  "integer",
+                                                                                                                      "title":  "Session Id"
+                                                                                                                  },
+                                                                                                   "reply":  {
+                                                                                                                 "type":  "string",
+                                                                                                                 "title":  "Reply"
+                                                                                                             },
+                                                                                                   "messages":  {
+                                                                                                                    "items":  {
+                                                                                                                                  "$ref":  "#/components/schemas/ChatMessage"
+                                                                                                                              },
+                                                                                                                    "type":  "array",
+                                                                                                                    "title":  "Messages"
+                                                                                                                }
+                                                                                               },
+                                                                                "type":  "object",
+                                                                                "required":  [
+                                                                                                 "session_id",
+                                                                                                 "reply",
+                                                                                                 "messages"
+                                                                                             ],
+                                                                                "title":  "ChatResponse"
+                                                                            }
+                                   },
+                       "securitySchemes":  {
+                                               "APIKeyHeader":  {
+                                                                    "type":  "apiKey",
+                                                                    "in":  "header",
+                                                                    "name":  "X-API-Key"
+                                                                },
+                                               "ApiKeyAuth":  {
+                                                                  "type":  "apiKey",
+                                                                  "in":  "header",
+                                                                  "name":  "X-API-Key",
+                                                                  "description":  "WattWise Orchestrate API key (set ORCHESTRATE_API_KEY in backend .env)"
+                                                              }
+                                           }
+                   },
+    "security":  [
+                     {
+                         "ApiKeyAuth":  [
+
+                                        ]
+                     }
+                 ],
+    "securityDefinitions":  {
+                                "ApiKeyAuth":  {
+                                                   "type":  "apiKey",
+                                                   "in":  "header",
+                                                   "name":  "X-API-Key"
+                                               }
+                            }
+}
